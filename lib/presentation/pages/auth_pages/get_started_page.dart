@@ -44,13 +44,17 @@ class _GetStartedState extends State<GetStarted> {
                 child: OutlinedButton.icon(
                   label: Text(
                     "Get Started",
-                    style: TextStyle(color: Colors.blue),
+                    style: TextStyle(color: Colors.blue , fontSize: 16),
                   ),
-                  icon: Icon(Icons.arrow_forward_rounded),
+                  icon: Icon(Icons.arrow_forward_ios_rounded),
                   onPressed: () =>
                       {Navigator.pushNamed(context, Routes.dashboard)},
                   style: OutlinedButton.styleFrom(
-                      side: BorderSide(width: 1, color: Colors.blue)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18.0),
+                    ),
+                    side: BorderSide(width: 1, color: Colors.blue),
+                  ),
                 ),
                 width: MediaQuery.of(context).size.width * 0.9,
                 height: 50,
@@ -65,3 +69,28 @@ class _GetStartedState extends State<GetStarted> {
     ));
   }
 }
+
+// Container(
+// child: GestureDetector(
+// child: Row(
+// mainAxisAlignment: MainAxisAlignment.spaceBetween,
+// children: [
+// Text(
+// "Get Started",
+// style: TextStyle(fontSize: 20, color: Colors.white),
+// ),
+// Icon(
+// Icons.keyboard_arrow_right,
+// size: 30,
+// color: Colors.white,
+// )
+// ],
+// ),
+// ),
+// width: MediaQuery.of(context).size.width * 0.9,
+// padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+// decoration: BoxDecoration(
+// borderRadius: BorderRadius.circular(5),
+// color: Colors.blue,
+// ),
+// ),

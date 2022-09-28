@@ -78,13 +78,13 @@ class _CryptoPriceState extends State<CryptoPrice> {
                       itemCount: apiStreamData.data?.length,
                       itemBuilder: (context, int index) {
                         return ContainerWid(
-                          name: "${apiStreamData.data?[index].coinName}",
-                          imageUrl:
-                              "${apiStreamData.data?[index].coinImageUrl}",
-                          price: "${apiStreamData.data?[index].coinPrice}",
-                          price_24_hour:
-                              "${apiStreamData.data?[index].price_change_24h}",
-                        );
+                            name: "${apiStreamData.data?[index].coinName}",
+                            imageUrl:
+                                "${apiStreamData.data?[index].coinImageUrl}",
+                            price: "${apiStreamData.data?[index].coinPrice}",
+                            price_24_hour:
+                                "${apiStreamData.data?[index].price_change_percentage_24h}",
+                            symbol: "${apiStreamData.data?[index].symbol}");
                       });
                 } else {
                   return const Text('Empty data');
@@ -106,12 +106,14 @@ class ContainerWid extends StatelessWidget {
       required this.name,
       required this.imageUrl,
       required this.price,
-      required this.price_24_hour})
+      required this.price_24_hour,
+      required this.symbol})
       : super(key: key);
   final String name;
   final String imageUrl;
   final String price;
   final String price_24_hour;
+  final String symbol;
 
   intModifier(dynamic money) {
     bool isNumeric(String s) {
@@ -122,14 +124,12 @@ class ContainerWid extends StatelessWidget {
     }
 
     if (isNumeric(money)) {
-      print("enyer d");
       return NumberFormat.currency(
         symbol: '₹ ',
         locale: "HI",
         decimalDigits: 3,
       ).format(double.parse(money));
     } else {
-      print("enyer i");
       return NumberFormat.currency(
         symbol: '₹ ',
         locale: "HI",
@@ -140,45 +140,119 @@ class ContainerWid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        child: Column(
-          children: [
-            SizedBox(
-              child: Image.network(imageUrl),
-              height: 50,
-              width: 50,
-            ),
-            SizedBox(
-              height: 5,
-            ),
-            Text(
-              name,
-              style: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 18,
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                    child: Image.network(
+                      imageUrl,
+                      height: 50,
+                      width: 50,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    "$name",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                  ),
+                ],
               ),
-            ),
-            Text(
-              intModifier(price),
-              style: TextStyle(fontWeight: FontWeight.w300, fontSize: 18),
-            ),
-            Text(
-              "${price_24_hour.contains("-") ? double.parse(price_24_hour.replaceAll("-", "")).toStringAsFixed(4) : intModifier(price_24_hour)}",
-              style: TextStyle(
-                  fontWeight: FontWeight.w300,
-                  fontSize: 18,
-                  color:
-                      price_24_hour.contains("-") ? Colors.red : Colors.green),
-            ),
-          ],
-        ),
-        width: MediaQuery.of(context).size.width * 0.3,
-        margin: EdgeInsets.all(5),
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-        decoration: BoxDecoration(
-            border: Border.all(color: Colors.blueGrey, width: 0.3),
-            borderRadius: BorderRadius.circular(10)),
-        constraints: BoxConstraints(
-          maxHeight: double.infinity,
-        ));
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    child: Text(
+                      "${symbol.toUpperCase()}",
+                      style:
+                          TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                  Wrap(
+                      alignment: WrapAlignment.center,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        price_24_hour.contains("-")
+                            ? Icon(
+                                Icons.arrow_drop_down,
+                                color: Colors.red,
+                              )
+                            : Icon(
+                                Icons.arrow_drop_up_sharp,
+                                color: Colors.green,
+                              ),
+                        Text(
+                          "${double.parse(price_24_hour).toStringAsFixed(3).toString()}%",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w300,
+                              fontSize: 18,
+                              color: price_24_hour.contains("-")
+                                  ? Colors.red
+                                  : Colors.green),
+                        ),
+                      ]),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(intModifier(price),
+                      style:
+                          TextStyle(fontWeight: FontWeight.w400, fontSize: 18)),
+                ],
+              ),
+            ],
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.start,
+          ),
+        ), // width: MediaQuery.of(context).size.width * 0.3,
+      ),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
+      constraints:
+          BoxConstraints(minWidth: MediaQuery.of(context).size.height * 0.15),
+      height: 100,
+    );
   }
 }
+
+// margin: EdgeInsets.all(5),
+// padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+// decoration: BoxDecoration(
+// border: Border.all(color: Colors.blueGrey, width: 0.3),
+//
+
+// SizedBox(
+// child: Image.network(imageUrl),
+// height: 50,
+// width: 50,
+// ),
+// SizedBox(
+// height: 5,
+// ),
+// Text(
+// name,
+// style: TextStyle(
+// fontWeight: FontWeight.w700,
+// fontSize: 18,
+// ),
+// ),
+// Text(
+// intModifier(price),
+// style: TextStyle(fontWeight: FontWeight.w300, fontSize: 18),
+// ),
+// Text(
+// "${price_24_hour.contains("-") ? double.parse(price_24_hour.replaceAll("-", "")).toStringAsFixed(4) : intModifier(price_24_hour)}",
+// style: TextStyle(
+// fontWeight: FontWeight.w300,
+// fontSize: 18,
+// color:
+// price_24_hour.contains("-") ? Colors.red : Colors.green),
+// ),
+// ],

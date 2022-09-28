@@ -82,7 +82,7 @@ class _AllCryptoScreenState extends State<AllCryptoScreen>
                             imageUrl:
                                 "${apiStreamData?.data?[index]?.coinImageUrl}",
                             price_24_hour:
-                                "${apiStreamData?.data?[index]?.price_change_24h}",
+                                "${apiStreamData?.data?[index]?.price_change_percentage_24h}",
                             onClickCoin: () => {
                               Navigator.pushNamed(context, Routes.crypto_charts)
                             },
@@ -121,14 +121,21 @@ class CryptoRowContainer extends StatelessWidget {
   final String price;
   final String price_24_hour;
 
+  dynamic zeroRemoverFromInt(String str) {
+    print("value============> $str");
+    return double.parse(str) > 0 && int.parse(str.split(".")[1]) == 0
+        ? int.parse(str)
+        : double.parse(str);
+  }
 
-  intModifier (dynamic money) {
-  return  NumberFormat.currency(
+  intModifier(dynamic money) {
+    return NumberFormat.currency(
       symbol: '₹ ',
       locale: "HI",
       decimalDigits: 3,
     ).format(double.parse(money));
   }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -166,7 +173,7 @@ class CryptoRowContainer extends StatelessWidget {
                       NumberFormat.currency(
                         symbol: '₹ ',
                         locale: "HI",
-                        decimalDigits: 3,
+                        decimalDigits: 0,
                       ).format(double.parse(price)),
                       style:
                           TextStyle(fontWeight: FontWeight.w300, fontSize: 18),
@@ -193,26 +200,33 @@ class CryptoRowContainer extends StatelessWidget {
                       ),
                       Row(
                         children: [
-                          Text(
-                            "24h",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w300,
-                                fontSize: 18,
-                                color: Colors.black87),
-                          ),
                           SizedBox(
                             width: 10,
                           ),
                           Container(
-                            child: Text(
-                              "${price_24_hour.contains("-") ? intModifier(double.parse(price_24_hour.replaceAll("-", "")).toStringAsFixed(4)) : intModifier(double.parse(price_24_hour).toStringAsFixed(4))}",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w300,
-                                  fontSize: 18,
-                                  color: price_24_hour.contains("-")
-                                      ? Colors.red
-                                      : Colors.green),
-                            ),
+                            child: Wrap(
+                                alignment: WrapAlignment.center,
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                children: [
+                                  price_24_hour.contains("-")
+                                      ? Icon(
+                                          Icons.arrow_drop_down,
+                                          color: Colors.red,
+                                        )
+                                      : Icon(
+                                          Icons.arrow_drop_up_sharp,
+                                          color: Colors.green,
+                                        ),
+                                  Text(
+                                    "${double.parse(price_24_hour).toStringAsFixed(3).toString()}%",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w300,
+                                        fontSize: 18,
+                                        color: price_24_hour.contains("-")
+                                            ? Colors.red
+                                            : Colors.green),
+                                  ),
+                                ]),
                           )
                         ],
                       )
@@ -227,7 +241,7 @@ class CryptoRowContainer extends StatelessWidget {
           margin: EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
               // border: Border.all(color: Colors.white60, width: 1),
-          ),
+              ),
           padding: EdgeInsets.all(10),
         ),
       ),

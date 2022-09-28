@@ -8,7 +8,7 @@ final String url1 =
     "https://api.coingecko.com/api/v3/coins/markets?vs_currency=inr&order=market_cap_desc&per_page=10&page=1&sparkline=false";
 
 final String url2 =
-    "https://api.coingecko.com/api/v3/coins/markets?vs_currency=inr&order=market_cap_desc&per_page=100&page=1&sparkline=false";
+    "https://api.coingecko.com/api/v3/coins/markets?vs_currency=inr&order=market_cap_desc&per_page=200&page=1&sparkline=false";
 
 Future<List<GetApiList>> fetch_10_coins() async {
   final response = await http.get(Uri.parse(url1));
